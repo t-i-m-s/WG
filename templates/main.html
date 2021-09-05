@@ -1,0 +1,159 @@
+{% extends "template.html" %}
+{% load static %}
+
+{% block links %}
+{% endblock %}
+
+{% block style %}
+  <style>
+  * {
+      margin: 0;
+      padding: 0;
+  }
+  body {
+      width: 100vw;
+      max-width: 100%;
+      background-color: rgba(200, 214, 229,1.0);
+  }
+  .wrapper {
+      width: 100%;
+      height: auto;
+      padding-top: 25vh;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+  }
+  .form {
+      margin-bottom: 50px;
+  }
+  .form form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+  .table {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 50px;
+  }
+  .table table {
+      margin-top: 20px;
+  }
+  td, th {
+      padding: 5px 20px;
+      text-align: center;
+  }
+  #clear_button {
+      display: none;
+  }
+  #clear_button + label {
+      display: inline-block;
+      border: black 2px solid;
+      cursor: pointer;
+      padding: 2px;
+  }
+  #clear_button:checked + label {
+      position: fixed;
+      top: 50vh;
+      left: 60vw;
+      color: black;
+      display: inline-block;
+      padding: 20px 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: black 2px solid;
+      transform: translateX(-50%);
+      z-index: 1;
+      background-color: rgba(29, 209, 161,1.0);
+  }
+  #clear_button + label:hover {
+      background-color: lightblue;
+  }
+  #clear_button + label + div {
+      display: none;
+  }
+  #clear_button:checked + label + div {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: block;
+      z-index: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(87, 101, 116, 0.8);
+  }
+  #clear {
+      position: fixed;
+      top: 50vh;
+      left: 40vw;
+      transform: translateX(-50%);
+      color: black;
+      display: inline-block;
+      padding: 20px 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: black 2px solid;
+      background-color: rgba(29, 209, 161,1.0);
+  }
+  #clear:hover {
+      background-color: red;
+  }
+  .errors {
+      color: red;
+  }
+  .warn {
+      color: rgba(29, 209, 161,1.0);
+      font-weight: 800;
+      position: fixed;
+      top: 40vh;
+      left: 50vw;
+      transform: translateX(-50%);
+  }
+  </style>
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        {% if error %}
+            <h1 class="errors">{{ error }}</h1>
+        {% endif %}
+        <div class="form">
+            <form id="form" action="." method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="file"><input id="file" name="file" type="file" accept="text/plain" form="form"></div>
+                <div class="submit"><input id="submit" type="submit"></div>
+            </form>
+        </div>
+        <div class="clear_table">
+            <input id="clear_button" type="checkbox">
+            <label class="clear_button_label" id="clear_button_label" for="clear_button">очистить/отменить</label>
+            <div id="yes_no">
+                <h1 class="warn">Все данные будут утеряны! Продолжить?</h1>
+                <form id="clear_form" action="http://127.0.0.1:8000?action=clear" method="POST">
+                    {% csrf_token %}
+                    <input id="clear" type="submit" value="да">
+                </form>
+            </div>
+        </div>
+        <div class="table">
+            <caption>Таблица частоты слов, файлов проверено : {{ checked }}</caption>
+            <table>
+            <tr>
+                <th>Word</th>
+                <th>tf</th>
+                <th>idf</th>
+            </tr>
+            {% if rows %}
+                {% for row in rows %}
+                        <tr><td>{{ row.0 }}</td><td>{{ row.1 }}</td><td>{{ row.2 }}</td></tr>
+                {% endfor %}
+            {% else %}
+                        <tr><td></td><td>No data</td><td></td></tr>
+            {% endif %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+{% endblock %}
